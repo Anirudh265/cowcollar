@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import re
 import numpy as np
 
 
@@ -7,13 +8,14 @@ time = []
 x = []
 y = []
 z = []
-f = open('stat_data.txt', 'r')
+f = open('linearlongmov_4turns.txt', 'r')
 for row in f:
-    row = row.split(',')
-    time.append(row[0][0:12])
-    x.append(float(row[0][-5:]))
-    y.append(float(row[1]))
-    z.append(float(row[2]))
+    row = re.split(r' |,|\n',row)
+    print(row)
+    time.append(row[0])
+    x.append(float(row[2]))
+    y.append(float(row[3]))
+    z.append(float(row[4]))
 xarr = np.array(x)
 yarr = np.array(y)
 zarr = np.array(z)
