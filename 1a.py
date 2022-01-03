@@ -115,28 +115,35 @@ plt.title("comparison acceleration")
 plt.plot(timearr1, xarr, label="ax1")
 plt.plot(timearr1, yarr, label="ay1")
 
-for i in range(len(xarr)-1,9,-1):
-    xarr[i]=((xarr[i-5]+xarr[i-1]+xarr[i-2]+xarr[i-3]+xarr[i-4]+xarr[i-6]+xarr[i-7]+xarr[i-8]+xarr[i-9]+xarr[i-10])/10.0)  
-for i in range(len(yarr)-1,9,-1):
-    yarr[i]=((yarr[i-5]+yarr[i-1]+yarr[i-2]+yarr[i-3]+yarr[i-4]+yarr[i-6]+yarr[i-7]+yarr[i-8]+yarr[i-9]+yarr[i-10])/10.0)  
-for i in range(len(zarr)-1,9,-1):
-    zarr[i]=((zarr[i-5]+zarr[i-1]+zarr[i-2]+zarr[i-3]+zarr[i-4]+zarr[i-6]+zarr[i-7]+zarr[i-8]+zarr[i-9]+zarr[i-10])/10.0)  
+for i in range(len(xarr)-1,19,-1):
+    k=0
+    for j in range(1,21):
+        k=k+xarr[i-j]
+    xarr[i]=k/20.0
+for i in range(len(yarr)-1,19,-1):
+    k=0
+    for j in range(1,21):
+        k=k+yarr[i-j]
+    yarr[i]=k/20.0
+      
+for i in range(len(zarr)-1,19,-1):
+    k=0
+    for j in range(1,21):
+        k=k+zarr[i-j]
+    zarr[i]=k/20.0
+    
 
 
 
-xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]=xarr[6]=xarr[7]=xarr[8]=xarr[9]=xarr[10]
-yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]=yarr[6]=yarr[7]=yarr[8]=yarr[9]=yarr[10]
-zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]=zarr[6]=zarr[7]=zarr[8]=zarr[9]=zarr[10]
+xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]=xarr[6]=xarr[7]=xarr[8]=xarr[9]=xarr[10]=xarr[11]=xarr[12]=xarr[13]=xarr[14]=xarr[15]=xarr[16]=xarr[17]=xarr[18]=xarr[19]=xarr[20]
+yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]=yarr[6]=yarr[7]=yarr[8]=yarr[9]=yarr[10]=yarr[11]=yarr[12]=yarr[13]=yarr[14]=yarr[15]=yarr[16]=yarr[17]=yarr[18]=yarr[19]=yarr[20]
+zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]=zarr[6]=zarr[7]=zarr[8]=zarr[9]=zarr[10]=zarr[11]=zarr[12]=zarr[13]=zarr[14]=zarr[15]=zarr[16]=zarr[17]=zarr[18]=zarr[19]=zarr[20]
 plt.plot(timearr1, xarr, label="ax2")
 plt.plot(timearr1, yarr, label="ay2")
 plt.legend()
 plt.show()
 
-
-
-
-
-
+'''**********************'''
 plt.title("after average acceleration")
 plt.plot(timearr1, xarr, label="ax")
 plt.plot(timearr1, yarr, label="ay")
