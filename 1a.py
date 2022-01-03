@@ -8,7 +8,7 @@ time = []
 x = []
 y = []
 z = []
-f = open('linear_mov1.txt', 'r')
+f = open('step_mov.txt', 'r')
 for row in f:
     row = re.split(r' |,|\n',row)
     time.append(row[0])
@@ -76,32 +76,65 @@ plt.plot(timearr1, yarr, label="ay")
 plt.plot(timearr1, zarr, label="az")
 plt.legend()
 plt.show()
-for i in range(len(xarr)-1,4,-1):
-    xarr[i]=((xarr[i-5]+xarr[i-1]+xarr[i-2]+xarr[i-3]+xarr[i-4])/5.0)  
-for i in range(len(yarr)-1,4,-1):
-    yarr[i]=((yarr[i-5]+yarr[i-1]+yarr[i-2]+yarr[i-3]+yarr[i-4])/5.0)  
-for i in range(len(zarr)-1,4,-1):
-    zarr[i]=((zarr[i-5]+zarr[i-1]+zarr[i-2]+zarr[i-3]+zarr[i-4])/5.0)  
+
+velocity1x=[0]
+velocity1y=[0]
+velocity1z=[0]
+for i in range(1,len(xarr)):
+    velocity1x.append(velocity1x[i-1]+xarr[i-1]*timediffarr[i-1])
+
+vx1arr= np.array(velocity1x)
+plt.plot(timearr1,vx1arr,label='vx')
+
+for i in range(1,len(yarr)):
+    
+    velocity1y.append(velocity1y[i-1]+yarr[i-1]*timediffarr[i-1])
+
+vy1arr= np.array(velocity1y)
+plt.plot(timearr1,vy1arr,label='vy')
+for i in range(1,len(zarr)):
+ 
+    velocity1z.append(velocity1z[i-1]+zarr[i-1]*timediffarr[i-1])
+
+vz1arr= np.array(velocity1z)
+plt.plot(timearr1,vz1arr,label='vz')
+plt.title("velocity after offset")
+plt.legend()
+plt.show()
+# for i in range(len(xarr)-1,4,-1):
+#     xarr[i]=((xarr[i-5]+xarr[i-1]+xarr[i-2]+xarr[i-3]+xarr[i-4])/5.0)  
+# for i in range(len(yarr)-1,4,-1):
+#     yarr[i]=((yarr[i-5]+yarr[i-1]+yarr[i-2]+yarr[i-3]+yarr[i-4])/5.0)  
+# for i in range(len(zarr)-1,4,-1):
+#     zarr[i]=((zarr[i-5]+zarr[i-1]+zarr[i-2]+zarr[i-3]+zarr[i-4])/5.0)  
+
+# xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]
+# yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]
+# zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]
+plt.title("comparison acceleration")
+plt.plot(timearr1, xarr, label="ax1")
+plt.plot(timearr1, yarr, label="ay1")
+
+for i in range(len(xarr)-1,9,-1):
+    xarr[i]=((xarr[i-5]+xarr[i-1]+xarr[i-2]+xarr[i-3]+xarr[i-4]+xarr[i-6]+xarr[i-7]+xarr[i-8]+xarr[i-9]+xarr[i-10])/10.0)  
+for i in range(len(yarr)-1,9,-1):
+    yarr[i]=((yarr[i-5]+yarr[i-1]+yarr[i-2]+yarr[i-3]+yarr[i-4]+yarr[i-6]+yarr[i-7]+yarr[i-8]+yarr[i-9]+yarr[i-10])/10.0)  
+for i in range(len(zarr)-1,9,-1):
+    zarr[i]=((zarr[i-5]+zarr[i-1]+zarr[i-2]+zarr[i-3]+zarr[i-4]+zarr[i-6]+zarr[i-7]+zarr[i-8]+zarr[i-9]+zarr[i-10])/10.0)  
 
 
 
-xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]
-yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]
-zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]
-
-
-# for i in range(len(xarr)-1,9,-1):
-#     xarr[i]=((xarr[i-5]+xarr[i-1]+xarr[i-2]+xarr[i-3]+xarr[i-4]+xarr[i-6]+xarr[i-7]+xarr[i-8]+xarr[i-9]+xarr[i-10])/10.0)  
-# for i in range(len(yarr)-1,9,-1):
-#     yarr[i]=((yarr[i-5]+yarr[i-1]+yarr[i-2]+yarr[i-3]+yarr[i-4]+yarr[i-6]+yarr[i-7]+yarr[i-8]+yarr[i-9]+yarr[i-10])/10.0)  
-# for i in range(len(zarr)-1,9,-1):
-#     zarr[i]=((zarr[i-5]+zarr[i-1]+zarr[i-2]+zarr[i-3]+zarr[i-4]+zarr[i-6]+zarr[i-7]+zarr[i-8]+zarr[i-9]+zarr[i-10])/10.0)  
+xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]=xarr[6]=xarr[7]=xarr[8]=xarr[9]=xarr[10]
+yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]=yarr[6]=yarr[7]=yarr[8]=yarr[9]=yarr[10]
+zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]=zarr[6]=zarr[7]=zarr[8]=zarr[9]=zarr[10]
+plt.plot(timearr1, xarr, label="ax2")
+plt.plot(timearr1, yarr, label="ay2")
+plt.legend()
+plt.show()
 
 
 
-# xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]=xarr[6]=xarr[7]=xarr[8]=xarr[9]=xarr[10]
-# yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]=yarr[6]=yarr[7]=yarr[8]=yarr[9]=yarr[10]
-# zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]=zarr[6]=zarr[7]=zarr[8]=zarr[9]=zarr[10]
+
 
 
 plt.title("after average acceleration")
@@ -133,7 +166,7 @@ for i in range(1,len(zarr)):
 
 vzarr= np.array(velocityz)
 plt.plot(timearr1,vzarr,label='vz')
-plt.title("velocity")
+plt.title("velocity after average")
 plt.legend()
 plt.show()
 # for j in yarr:
