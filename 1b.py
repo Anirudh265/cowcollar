@@ -151,25 +151,26 @@ plt.show()
 velocityx=[0]
 velocityy=[0]
 velocityz=[0]
+
 for i in range(1,len(xarr)):
-    velocityx.append(velocityx[i-1]+xarr[i-1]*timediffarr[i-1])
+    velocityx.append(velocityx[-1]+np.trapz([xarr[i-1],xarr[i]],[timearr[i-1],timearr[i]]))
 
 vxarr= np.array(velocityx)
 plt.plot(timearr1,vxarr,label='vx')
 
 for i in range(1,len(yarr)):
     
-    velocityy.append(velocityy[i-1]+yarr[i-1]*timediffarr[i-1])
+    velocityy.append(velocityy[-1]+np.trapz([yarr[i-1],yarr[i]],[timearr[i-1],timearr[i]]))
 
 vyarr= np.array(velocityy)
 plt.plot(timearr1,vyarr,label='vy')
 for i in range(1,len(zarr)):
  
-    velocityz.append(velocityz[i-1]+zarr[i-1]*timediffarr[i-1])
+    velocityz.append(velocityz[-1]+np.trapz([zarr[i-1],zarr[i]],[timearr[i-1],timearr[i]]))
 
 vzarr= np.array(velocityz)
 plt.plot(timearr1,vzarr,label='vz')
-plt.title("velocity after average")
+plt.title("velocity after average by integration")
 plt.legend()
 plt.show()
 # for j in yarr:
