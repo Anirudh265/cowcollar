@@ -114,3 +114,15 @@ plt.show()
 # plt.legend()
 # plt.show()
 '''*********************'''
+"""
+trapz function
+velocity1x=[0]
+velocity1y=[0]
+velocity1z=[0]
+for i in range(1,len(xarr)):
+    velocity1x.append(velocity1x[-1]+np.trapz([xarr[i-1],xarr[i]],[timearr1[i-1],timearr1[i]]))
+velocity1xx=np.array(velocity1x)
+print(velocity1xx)
+plt.plot(timearr1,velocity1xx)
+plt.show()
+"""
