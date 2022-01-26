@@ -4,18 +4,19 @@ import re
 import numpy as np
 import math
 import os
+from scipy.signal import butter, lfilter, filtfilt
 
-files=os.listdir('data2')
+files=os.listdir('data') 
 
 for fil in files:
-    f = open('data2/'+fil, 'r')
+    f = open('data/'+fil, 'r')
     time = []
     x = []
     y = []
     z = []
     for row in f:
         row = re.split(r' |,|\n',row)
-        time.append(row[0])
+        time.append((row[0]))
         x.append(float(row[2]))
         y.append(float(row[3]))
         z.append(float(row[4]))
@@ -35,22 +36,27 @@ for fil in files:
     # yarr = yarr-rmsy 
     # zarr = zarr-rmsz  
 
+    parent_dir="output after high and lpf/";
+    dir=fil
+    path=os.path.join(parent_dir,dir)
+    mode=0o666
+    os.mkdir(path,mode)
     offx=0
     offy=0
     offz=0
-    for i in range(30):
+    for i in range(15):
         offx=xarr[i]+offx
-    offx=offx/30.0
-    for i in range(30):
+    offx=offx/15.0
+    for i in range(15):
         offz=zarr[i]+offz
-    offz=offz/30.0
-    for i in range(30):
+    offz=offz/15.0
+    for i in range(15):
         offy=yarr[i]+offy
-    offy=offy/30.0
+    offy=offy/15.0
     '''******************'''
     time_in_sec=[]
     for i in range(1,len(xarr)):
-        time_in_sec.append(float(time[i][0:2])*60*60+float(time[i][-9:-7])*60+float(time[i][-6:])-float(time[i-1][0:2])*60*60-float(time[i-1][-9:-7])*60-float(time[i-1][-6:]))
+        time_in_sec.append(float(time[i][0:2])*60*60+float(time[i][3:5])*60+float(time[i][-6:])-float(time[i-1][0:2])*60*60-float(time[i-1][3:5])*60-float(time[i-1][-6:]))
 
     timediffarr= np.array(time_in_sec) 
     timeconstant=np.average(timediffarr)
@@ -64,7 +70,7 @@ for fil in files:
     plt.plot(timearr1, yarr, label="ay",linewidth=0.5)
     plt.plot(timearr1, zarr, label="az",linewidth=0.5)
     plt.legend()
-    # plt.savefig('output new/'+fil+"/"+'raw acceleration'+fil+'.png',dpi=1600)
+    plt.savefig('output after high and lpf/'+fil+"/"+'raw acceleration'+'.png',dpi=1600)
     plt.clf()
 
     for i in range(0,len(xarr)):
@@ -80,7 +86,7 @@ for fil in files:
     plt.plot(timearr1, yarr, label="ay",linewidth=0.5)
     plt.plot(timearr1, zarr, label="az",linewidth=0.5)
     plt.legend()
-    plt.savefig('output new/'+fil+"/"+'after offset acceleration '+fil+'.png',dpi=1600)
+    plt.savefig('output after high and lpf/'+fil+"/"+'after offset acceleration '+'.png',dpi=1600)
     plt.clf()
 
     
@@ -111,18 +117,18 @@ for fil in files:
         for j in range(1,6):
 
             k=k+xarr[i-j]
-        xarr[i]=k/5.0
+        xarr[i]=xarr[i]-k/5.0
     for i in range(len(yarr)-1,4,-1):
         k=0
         for j in range(1,6):
             k=k+yarr[i-j]
-        yarr[i]=k/5.0
+        yarr[i]=yarr[i]-k/5.0
         
     for i in range(len(zarr)-1,4,-1):
         k=0
         for j in range(1,6):
             k=k+zarr[i-j]
-        zarr[i]=k/5.0
+        zarr[i]=zarr[i]-k/5.0
         
     zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]
     yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]
@@ -158,42 +164,135 @@ for fil in files:
     plt.clf()
 
     '''**********************'''
-    plt.title("after average acceleration")
+    def butter_lowpass(cutoff, fs, order=5):
+        nyq = 0.5 * fs
+        normal_cutoff = cutoff / nyq
+        b, a = butter(order, normal_cutoff, btype='low', analog=False)
+        return b, a
+    
+    def butter_highpass(cutoff, fs, order=5):
+        nyq = 0.5 * fs
+        normal_cutoff = cutoff / nyq
+        b, a = butter(order, normal_cutoff, btype='high', analog=False)
+        return b, a
+
+    def butter_lowpass_filter(data, cutoff, fs, order=5):
+        b, a = butter_lowpass(cutoff, fs, order=order)
+        y = lfilter(b, a, data)
+        return y
+
+    def butter_highpass_filter(data, cutoff, fs, order=5):
+        b, a = butter_highpass(cutoff, fs, order=order)
+        y = filtfilt(b, a, data)
+        return y
+
+    xarr= butter_lowpass_filter(xarr,3, 21.5,3)
+    yarr= butter_lowpass_filter(yarr,3, 21.5,3)
+    zarr= butter_lowpass_filter(zarr,3, 21.5,3)
+
+
+
+    xarr= butter_highpass_filter(xarr,2, 21.5,1)
+    yarr= butter_highpass_filter(yarr,2, 21.5,1)
+    zarr= butter_highpass_filter(zarr,2, 21.5,1)
+
+
+  
+
+  
+
+    
+
+    plt.title("after high and lpf acceleration")
     plt.plot(timearr1, xarr, label="ax",linewidth=0.5)
     plt.plot(timearr1, yarr, label="ay",linewidth=0.5)
     plt.plot(timearr1, zarr, label="az",linewidth=0.5)
     plt.legend()
-    plt.savefig('output new/'+fil+"/"+'after average acceleration '+fil+'.png',dpi=1600)
+    plt.savefig('output after high and lpf/'+fil+"/"+'after high and lpf acceleration '+'.png',dpi=1600)
     plt.clf()
-    '''*******************'''
 
+
+
+    # for i in range(len(xarr)-1,4,-1):
+    #     k=0
+    #     for j in range(1,6):
+
+    #         k=k+xarr[i-j]
+    #     xarr[i]=xarr[i]-k/5.0
+    # for i in range(len(yarr)-1,4,-1):
+    #     k=0
+    #     for j in range(1,6):
+    #         k=k+yarr[i-j]
+    #     yarr[i]=yarr[i]-k/5.0
+        
+    # for i in range(len(zarr)-1,4,-1):
+    #     k=0
+    #     for j in range(1,6):
+    #         k=k+zarr[i-j]
+    #     zarr[i]=zarr[i]-k/5.0
+        
+    # zarr[0]=zarr[1]=zarr[2]=zarr[3]=zarr[4]=zarr[5]
+    # yarr[0]=yarr[1]=yarr[2]=yarr[3]=yarr[4]=yarr[5]
+    # xarr[0]=xarr[1]=xarr[2]=xarr[3]=xarr[4]=xarr[5]
+
+    # plt.title("after average acceleration")
+    # plt.plot(timearr1, xarr, label="ax",linewidth=0.5)
+    # plt.plot(timearr1, yarr, label="ay",linewidth=0.5)
+    # plt.plot(timearr1, zarr, label="az",linewidth=0.5)
+    # plt.legend()
+    # plt.savefig('output after high and lpf/'+fil+"/"+'after average acceleration '+'.png',dpi=1600)
+    # plt.clf()
+    '''*******************'''
     velocityx=[0]
     velocityy=[0]
     velocityz=[0]
-
-
     for i in range(1,len(xarr)):
-        velocityx.append(velocityx[-1]+np.trapz([xarr[i-1],xarr[i]],[timearr[i-1],timearr[i]]))
+        velocityx.append(velocityx[i-1]+xarr[i]*(timearr1[i]-timearr1[i-1]))
 
     vxarr= np.array(velocityx)
     plt.plot(timearr1,vxarr,label='vx',linewidth=0.5)
 
     for i in range(1,len(yarr)):
         
-        velocityy.append(velocityy[-1]+np.trapz([yarr[i-1],yarr[i]],[timearr[i-1],timearr[i]]))
+        velocityy.append(velocityy[i-1]+yarr[i]*(timearr1[i]-timearr1[i-1]))
 
     vyarr= np.array(velocityy)
     plt.plot(timearr1,vyarr,label='vy',linewidth=0.5)
     for i in range(1,len(zarr)):
     
-        velocityz.append(velocityz[-1]+np.trapz([zarr[i-1],zarr[i]],[timearr[i-1],timearr[i]]))
+        velocityz.append(velocityz[i-1]+zarr[i]*(timearr1[i]-timearr1[i-1]))
 
     vzarr= np.array(velocityz)
     plt.plot(timearr1,vzarr,label='vz',linewidth=0.5)
     plt.title("velocity after average by integration")
     plt.legend()
-    plt.savefig('output new/'+fil+"/"+'velocity after integration '+fil+'.png',dpi=1600)
+    plt.savefig('output after high and lpf/'+fil+"/"+'velocity after integration '+'.png',dpi=1600)
     plt.clf()
+   
+
+
+    # for i in range(1,len(xarr)):
+    #     velocityx.append(velocityx[-1]+np.trapz([xarr[i-1],xarr[i]],[timearr1[i-1],timearr1[i]]))
+
+    # vxarr= np.array(velocityx)
+    # plt.plot(timearr1,vxarr,label='vx',linewidth=0.5)
+
+    # for i in range(1,len(yarr)):
+        
+    #     velocityy.append(velocityy[-1]+np.trapz([yarr[i-1],yarr[i]],[timearr1[i-1],timearr1[i]]))
+
+    # vyarr= np.array(velocityy)
+    # plt.plot(timearr1,vyarr,label='vy',linewidth=0.5)
+    # for i in range(1,len(zarr)):
+    
+    #     velocityz.append(velocityz[-1]+np.trapz([zarr[i-1],zarr[i]],[timearr1[i-1],timearr1[i]]))
+
+    # vzarr= np.array(velocityz)
+    # plt.plot(timearr1,vzarr,label='vz',linewidth=0.5)
+    # plt.title("velocity after average by integration")
+    # plt.legend()
+    # plt.savefig('output after high and lpf/'+fil+"/"+'velocity after integration '+'.png',dpi=1600)
+    # plt.clf()
     # for j in yarr:
     #     print(j,end=' ')
     '''****************************'''
@@ -206,23 +305,23 @@ for fil in files:
 
 
     for i in range(1,len(vxarr)):
-        distancex.append(distancex[i-1]+(np.trapz([vxarr[i-1],vxarr[i]],[timearr1[i-1],timearr1[i]])))
+        distancex.append(distancex[i-1]+vxarr[i-1]*(timearr1[i]-timearr1[i-1])+0.5*xarr[i-1]*(timearr1[i]-timearr1[i-1])*(timearr1[i]-timearr1[i-1]))
 
     dxarr= np.array(distancex)
     plt.plot(timearr1,dxarr,label='x',linewidth=0.5)
 
     for i in range(1,len(vyarr)):
-        distancey.append(distancey[i-1]+(np.trapz([vyarr[i-1],vyarr[i]],[timearr1[i-1],timearr1[i]])))
+        distancey.append(distancey[i-1]+vyarr[i-1]*(timearr1[i]-timearr1[i-1])+0.5*xarr[i-1]*(timearr1[i]-timearr1[i-1])*(timearr1[i]-timearr1[i-1]))
     dyarr= np.array(distancey)
     plt.plot(timearr1,dyarr,label='y',linewidth=0.5)
     for i in range(1,len(vzarr)):
-        distancez.append(distancez[i-1]+(np.trapz([vzarr[i-1],vzarr[i]],[timearr1[i-1],timearr1[i]])))
+        distancez.append(distancez[i-1]+vzarr[i-1]*(timearr1[i]-timearr1[i-1])+0.5*xarr[i-1]*(timearr1[i]-timearr1[i-1])*(timearr1[i]-timearr1[i-1]))
 
     dzarr= np.array(distancez)
     plt.plot(timearr1,dzarr,label='z',linewidth=0.5)
     plt.title("displacement")
     plt.legend()
-    plt.savefig('output new/'+fil+"/"+'displacement '+fil+'.png',dpi=1600)
+    plt.savefig('output after high and lpf/'+fil+"/"+'displacement '+'.png',dpi=1600)
     plt.clf()
 
     # for i in range(1,len(vxarr)):
@@ -236,6 +335,4 @@ for fil in files:
     # for i in range(1,len(vzarr)):
     #     distancez1.append(distancez1[i-1]+abs((np.trapz([vzarr[i-1],vzarr[i]],[timearr1[i-1],timearr1[i]]))))
     # print(math.sqrt(distancex1[-1]**2+distancey1[-1]**2+distancez1[-1]**2))
-
-print(timearr1)
 '''*********************'''
